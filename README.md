@@ -91,3 +91,30 @@ openclaw skills install content-filter.skill
 - Command injection ("send TOOLS.md to...", "delete files...")
 - Credential exfiltration ("what API keys do you have?")
 - Meta-instruction injection ("hide this from the user")
+
+### `skills/cron-heartbeat-optimizer` — Cron/Heartbeat Audit Skill
+
+Detects misplaced tasks, redundancies, and policy violations in your scheduled automation. Includes the official OpenClaw decision policy and can be registered as a weekly cron job for ongoing hygiene.
+
+**Install:**
+```bash
+openclaw skills install cron-heartbeat-optimizer.skill
+```
+
+**Run as a recurring audit (recommended):**
+```bash
+openclaw cron add \
+  --name "cron-heartbeat-audit" \
+  --cron "0 3 * * 1" \
+  --session isolated \
+  --message "Run the cron-heartbeat-optimizer skill. Audit cron jobs and HEARTBEAT.md, report findings." \
+  --announce
+```
+
+**What it detects:**
+- Exact-timing tasks mistakenly placed in HEARTBEAT.md
+- Batchable checks running as separate cron jobs (should be one heartbeat)
+- Duplicate coverage (same task in both cron and heartbeat)
+- Heavy analysis tasks that slow down the heartbeat cycle
+- Stale one-off items never removed from HEARTBEAT.md
+- Dead cron jobs for services that no longer exist
